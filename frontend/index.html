@@ -181,31 +181,31 @@
     }
     .sem-avg-badge span { font-size: 1.1rem; font-weight: 800; color: #fff; }
 
-    /* ── Module list ─────────────────────────────────────────────────────── */
-    .modules-list { display: flex; flex-direction: column; gap: 10px; }
+    /* ── Module list ───────────────────────────────────────────────────────────── */
+    .modules-list { display: flex; flex-direction: column; gap: 12px; }
 
     .module-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 22px;
+      display: flex; flex-direction: column;
+      padding: 18px 22px;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      transition: transform var(--trans), border-color var(--trans), box-shadow var(--trans);
+      transition: border-color var(--trans), box-shadow var(--trans);
       animation: fadeUp .3s ease both;
     }
     .module-row:hover {
-      transform: translateX(4px);
-      border-color: rgba(108,99,255,0.3);
-      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+      border-color: rgba(108,99,255,0.25);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
     }
 
-    .module-name {
-      font-size: 0.95rem; font-weight: 500; flex: 1; padding-right: 16px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    /* Ligne du haut : nom + note */
+    .module-top {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 0;
     }
-    .module-dots {
-      flex: 1; border-bottom: 2px dotted rgba(255,255,255,0.1);
-      margin: 0 12px; min-width: 20px;
+    .module-name {
+      font-size: 1rem; font-weight: 600; flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .module-grade {
       font-size: 1.05rem; font-weight: 700; min-width: 52px; text-align: right;
@@ -225,8 +225,39 @@
 
     .module-coeff {
       font-size: 0.72rem; color: var(--muted); font-weight: 500;
-      margin-left: 10px; min-width: 36px; text-align: center;
+      white-space: nowrap; flex-shrink: 0;
     }
+
+    /* Séparateur entre la note et les épreuves */
+    .module-divider {
+      height: 1px; background: var(--border);
+      margin: 12px 0 10px;
+    }
+
+    /* Épreuves individuelles sous chaque module */
+    .module-epreuves { display: flex; flex-direction: column; gap: 5px; }
+    .ep-line {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem;
+    }
+    .ep-name {
+      flex: 1; color: rgba(148,163,184,0.75);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ep-date {
+      font-size: 0.7rem; color: rgba(100,116,139,0.65); flex-shrink: 0;
+    }
+    .ep-dots {
+      flex: 0 0 24px; border-bottom: 1px dotted rgba(255,255,255,0.08);
+    }
+    .ep-grade {
+      font-weight: 600; min-width: 52px; text-align: right;
+      flex-shrink: 0; font-size: 0.82rem;
+    }
+    .ep-grade.grade-good  { color: rgba(52,211,153,0.65); }
+    .ep-grade.grade-warn  { color: rgba(251,191,36,0.65); }
+    .ep-grade.grade-bad   { color: rgba(248,113,113,0.65); }
+    .ep-grade.grade-none  { color: rgba(100,116,139,0.55); }
 
     /* ── Modal ───────────────────────────────────────────────────────────── */
     .modal-overlay {
@@ -242,19 +273,47 @@
       background: #13192b;
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 36px;
-      width: 100%; max-width: 460px;
+      padding: 0;
+      width: 100%; max-width: 520px;
+      max-height: 90vh;
+      display: flex; flex-direction: column;
       box-shadow: 0 24px 80px rgba(0,0,0,0.6);
       transform: translateY(20px) scale(0.97);
       transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+      overflow: hidden;
     }
     .modal-overlay.open .modal { transform: translateY(0) scale(1); }
 
+    /* Partie fixe en haut */
+    .modal-fixed {
+      padding: 28px 32px 0;
+      flex-shrink: 0;
+    }
+    /* Partie scrollable en bas */
+    .modal-scrollable {
+      padding: 0 32px 28px;
+      overflow-y: auto;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(108,99,255,0.3) transparent;
+    }
+    .modal-scrollable::-webkit-scrollbar { width: 4px; }
+    .modal-scrollable::-webkit-scrollbar-thumb {
+      background: rgba(108,99,255,0.3); border-radius: 2px;
+    }
+
     .modal-header {
       display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 24px;
+      margin-bottom: 4px;
     }
-    .modal-title { font-size: 1.1rem; font-weight: 700; line-height: 1.3; flex: 1; padding-right: 12px; }
+    /* Grand titre de la matière */
+    .modal-subject-name {
+      font-size: 1.55rem; font-weight: 800; line-height: 1.2;
+      letter-spacing: -0.5px; flex: 1; padding-right: 14px;
+      background: linear-gradient(135deg, #e2e8f0, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
     .modal-close {
       width: 32px; height: 32px; border-radius: 8px;
       background: rgba(255,255,255,0.06); border: 1px solid var(--border);
@@ -263,11 +322,15 @@
       flex-shrink: 0; transition: all var(--trans);
     }
     .modal-close:hover { background: rgba(248,113,113,0.15); border-color: var(--bad); color: var(--bad); }
+    .modal-subject-sigle {
+      font-size: 0.72rem; color: var(--muted); font-weight: 500;
+      letter-spacing: .5px; margin-bottom: 20px; margin-top: 4px;
+    }
 
     /* Grade hero */
     .grade-hero {
-      text-align: center; margin-bottom: 28px;
-      padding: 24px; border-radius: var(--radius);
+      text-align: center; margin-bottom: 20px;
+      padding: 20px; border-radius: var(--radius);
       background: linear-gradient(135deg,rgba(108,99,255,0.15),rgba(167,139,250,0.1));
       border: 1px solid rgba(108,99,255,0.2);
     }
@@ -282,10 +345,10 @@
     /* Stats grid */
     .stats-grid {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     .stat-card {
-      padding: 16px 18px; border-radius: var(--radius-sm);
+      padding: 14px 16px; border-radius: var(--radius-sm);
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
     }
@@ -294,7 +357,7 @@
       letter-spacing: .5px; font-weight: 600; margin-bottom: 6px;
     }
     .stat-card .stat-value {
-      font-size: 1.3rem; font-weight: 700;
+      font-size: 1.25rem; font-weight: 700;
     }
     .stat-value.color-good { color: var(--good); }
     .stat-value.color-warn { color: var(--warn); }
@@ -302,7 +365,7 @@
 
     /* Bar chart inside modal */
     .grade-bar-wrap {
-      margin-top: 20px; padding: 14px 18px;
+      margin-top: 16px; padding: 14px 18px;
       border-radius: var(--radius-sm);
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
@@ -320,15 +383,65 @@
       background: linear-gradient(90deg,#6c63ff,#a78bfa);
       transition: width .7s cubic-bezier(.4,0,.2,1);
     }
-    .bar-min-marker, .bar-you-marker {
-      position: absolute; top: -4px;
-      width: 4px; height: 16px; border-radius: 2px; transform: translateX(-50%);
-    }
-    .bar-min-marker  { background: var(--bad); }
-    .bar-you-marker  { background: #fff; }
     .bar-legend {
       display: flex; justify-content: space-between;
       font-size: 0.7rem; color: var(--muted);
+    }
+
+    /* ── Épreuves individuelles ──────────────────────────────────────────── */
+    .epreuves-section {
+      margin-top: 20px;
+    }
+    .epreuves-title {
+      font-size: 0.72rem; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .5px; font-weight: 600; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .epreuves-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .epreuve-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+      transition: border-color var(--trans), background var(--trans);
+      animation: fadeUp .25s ease both;
+    }
+    .epreuve-row:hover {
+      background: rgba(108,99,255,0.07);
+      border-color: rgba(108,99,255,0.25);
+    }
+    .epreuve-info { flex: 1; min-width: 0; }
+    .epreuve-nom {
+      font-size: 0.88rem; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .epreuve-date {
+      font-size: 0.72rem; color: var(--muted); margin-top: 2px;
+    }
+    .epreuve-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .epreuve-grade {
+      font-size: 1rem; font-weight: 700; min-width: 48px; text-align: right;
+    }
+    .epreuve-coeff {
+      font-size: 0.68rem; color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 2px 7px; border-radius: 100px;
+    }
+    /* Mini barre dans chaque épreuve */
+    .epreuve-minibar {
+      width: 60px; height: 4px; border-radius: 100px;
+      background: rgba(255,255,255,0.07); position: relative;
+      flex-shrink: 0;
+    }
+    .epreuve-minibar-fill {
+      height: 100%; border-radius: 100px;
+      background: linear-gradient(90deg,#6c63ff,#a78bfa);
+      transition: width .6s cubic-bezier(.4,0,.2,1);
     }
 
     /* ── Spinner ─────────────────────────────────────────────────────────── */
@@ -355,10 +468,12 @@
     }
 
     /* ── Responsive ──────────────────────────────────────────────────────── */
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
       .login-card { padding: 28px 20px; }
       .stats-grid  { grid-template-columns: 1fr; }
-      .modal       { padding: 24px 18px; }
+      .modal-fixed     { padding: 20px 18px 0; }
+      .modal-scrollable { padding: 0 18px 20px; }
+      .modal-subject-name { font-size: 1.25rem; }
       .grade-hero .grade-value { font-size: 2.2rem; }
       .module-name { font-size: 0.87rem; }
     }
@@ -435,24 +550,38 @@
 <!-- ── Modal de détail ──────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitle"></div>
-      <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
-    </div>
-    <div class="grade-hero">
-      <div class="grade-value" id="modalGradeValue"></div>
-      <div class="grade-label">Ma note</div>
-    </div>
-    <div class="stats-grid" id="modalStats"></div>
-    <div class="grade-bar-wrap" id="modalBarWrap">
-      <div class="bar-label">Positionnement dans la classe</div>
-      <div class="bar-track" id="modalBarTrack">
-        <div class="bar-fill" id="modalBarFill" style="width:0%"></div>
+    <!-- Partie fixe : titre de la matière + note globale -->
+    <div class="modal-fixed">
+      <div class="modal-header">
+        <h2 class="modal-subject-name" id="modalSubjectName"></h2>
+        <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
       </div>
-      <div class="bar-legend">
-        <span id="barLegendMin"></span>
-        <span id="barLegendMoy"></span>
-        <span id="barLegendMax"></span>
+      <div class="modal-subject-sigle" id="modalSubjectSigle"></div>
+    </div>
+
+    <!-- Partie scrollable : stats + épreuves -->
+    <div class="modal-scrollable">
+      <div class="grade-hero">
+        <div class="grade-value" id="modalGradeValue"></div>
+        <div class="grade-label">Note du module</div>
+      </div>
+      <div class="stats-grid" id="modalStats"></div>
+      <div class="grade-bar-wrap" id="modalBarWrap">
+        <div class="bar-label">Positionnement dans la classe</div>
+        <div class="bar-track">
+          <div class="bar-fill" id="modalBarFill" style="width:0%"></div>
+        </div>
+        <div class="bar-legend">
+          <span id="barLegendMin"></span>
+          <span id="barLegendMoy"></span>
+          <span id="barLegendMax"></span>
+        </div>
+      </div>
+
+      <!-- Liste des épreuves -->
+      <div class="epreuves-section" id="epreuvesSection">
+        <div class="epreuves-title">Épreuves</div>
+        <div id="epreuvesList"></div>
       </div>
     </div>
   </div>
@@ -580,27 +709,56 @@ function renderModules(modules) {
   }
 
   modules.forEach((mod, i) => {
-    const row  = document.createElement('div');
+    const row = document.createElement('div');
     row.className = 'module-row';
     row.style.animationDelay = `${i * 40}ms`;
 
     const hasGrade = mod.note !== null;
     const gc       = gradeClass(mod.note);
+    const epreuves = mod.epreuves || [];
 
-    row.innerHTML = `
+    // ── Ligne du haut : nom + note + coeff ───────────────────────────
+    const top = document.createElement('div');
+    top.className = 'module-top';
+    top.innerHTML = `
       <span class="module-name" title="${mod.nom}">${mod.nom}</span>
-      <span class="module-dots"></span>
-      <span class="module-grade ${gc}" id="grade-${i}"
-            ${hasGrade ? 'role="button" tabindex="0" title="Voir les détails"' : ''}>
-        ${hasGrade ? fmt(mod.note) + ' / 20' : 'N/A'}
-      </span>
       <span class="module-coeff">×${fmt(mod.coeff)}</span>
+      <span class="module-grade ${gc}"
+            ${hasGrade ? 'role="button" tabindex="0" title="Voir les statistiques"' : ''}>
+        ${hasGrade ? fmt(mod.note) + ' / 20' : 'N/A'}
+      </span>
     `;
-
     if (hasGrade) {
-      const gradeEl = row.querySelector(`#grade-${i}`);
+      const gradeEl = top.querySelector('.module-grade');
       gradeEl.addEventListener('click', () => openModal(mod));
       gradeEl.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(mod); });
+    }
+    row.appendChild(top);
+
+    // ── Épreuves en dessous (si disponibles) ──────────────────────────
+    if (epreuves.length > 0) {
+      const div = document.createElement('div');
+      div.className = 'module-divider';
+      row.appendChild(div);
+
+      const epContainer = document.createElement('div');
+      epContainer.className = 'module-epreuves';
+
+      epreuves.forEach(ep => {
+        const epGc    = gradeClass(ep.note);
+        const hasNote = ep.note !== null;
+        const line = document.createElement('div');
+        line.className = 'ep-line';
+        line.innerHTML = `
+          <span class="ep-name" title="${ep.nom}">${ep.nom}</span>
+          ${ep.date ? `<span class="ep-date">${ep.date}</span>` : ''}
+          <span class="ep-dots"></span>
+          <span class="ep-grade ${epGc}">${hasNote ? fmt(ep.note) + ' / 20' : '—'}</span>
+        `;
+        epContainer.appendChild(line);
+      });
+
+      row.appendChild(epContainer);
     }
 
     list.appendChild(row);
@@ -609,9 +767,11 @@ function renderModules(modules) {
 
 /* ── Modal ──────────────────────────────────────────────────────────────── */
 function openModal(mod) {
-  $('modalTitle').textContent = mod.nom;
+  // Grand titre de la matière
+  $('modalSubjectName').textContent = mod.nom;
+  $('modalSubjectSigle').textContent = mod.sigle || '';
 
-  // Grade hero
+  // Grade hero — note globale du module
   const gradeEl = $('modalGradeValue');
   gradeEl.textContent = fmt(mod.note) + ' / 20';
   gradeEl.className   = 'grade-value ' + colorClass(mod.note);
@@ -643,6 +803,57 @@ function openModal(mod) {
     $('barLegendMax').textContent = `Max : ${fmt(mod.max)}`;
   } else {
     barWrap.style.display = 'none';
+  }
+
+  // ── Épreuves individuelles ───────────────────────────────────────────
+  const epreuves = mod.epreuves || [];
+  const epSection = $('epreuvesSection');
+  const epList    = $('epreuvesList');
+  epList.innerHTML = '';
+
+  if (epreuves.length === 0) {
+    epSection.style.display = 'none';
+  } else {
+    epSection.style.display = 'block';
+    epreuves.forEach((ep, i) => {
+      const hasNote = ep.note !== null;
+      const gc      = gradeClass(ep.note);
+
+      // Mini-barre de positionnement par épreuve
+      let miniBarHTML = '';
+      if (hasNote && ep.min !== null && ep.max !== null && ep.max > ep.min) {
+        const pct = Math.max(0, Math.min(100,
+          ((ep.note - ep.min) / (ep.max - ep.min)) * 100
+        ));
+        miniBarHTML = `
+          <div class="epreuve-minibar">
+            <div class="epreuve-minibar-fill" style="width:0%" data-pct="${pct}"></div>
+          </div>`;
+      }
+
+      const row = document.createElement('div');
+      row.className = 'epreuve-row';
+      row.style.animationDelay = `${i * 35}ms`;
+      row.innerHTML = `
+        <div class="epreuve-info">
+          <div class="epreuve-nom">${ep.nom}</div>
+          ${ep.date ? `<div class="epreuve-date">${ep.date}</div>` : ''}
+        </div>
+        ${miniBarHTML}
+        <div class="epreuve-right">
+          <span class="epreuve-grade ${gc}">${hasNote ? fmt(ep.note) + ' / 20' : '—'}</span>
+          ${ep.coeff ? `<span class="epreuve-coeff">×${fmt(ep.coeff)}</span>` : ''}
+        </div>
+      `;
+      epList.appendChild(row);
+    });
+
+    // Animer les mini-barres après insertion
+    setTimeout(() => {
+      epList.querySelectorAll('.epreuve-minibar-fill').forEach(el => {
+        el.style.width = el.dataset.pct + '%';
+      });
+    }, 80);
   }
 
   $('modalOverlay').classList.add('open');

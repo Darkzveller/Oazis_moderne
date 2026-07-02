@@ -84,6 +84,34 @@ def parse_marks(html: str) -> dict:
 
         modules = []
 
+        # Extraction des épreuves individuelles (TabTests)
+        # Col 0 : "EPU-F5-SEE <char_latin1>Titre du module" — on extrait le sigle
+        # Col 1 : Nom de l'épreuve | Col 2 : Date | Col 3 : Note | Col 4 : Coeff
+        # Col 5 : Min | Col 6 : Max | Col 7 : Moyenne classe
+        epreuves_by_sigle: dict = {}
+        tests_tab = sem_div.find('div', id=lambda x: x and x.startswith('TabTests'))
+        if tests_tab:
+            table = tests_tab.find('table')
+            if table:
+                for row in table.find_all('tr')[1:]:
+                    cols = row.find_all('td')
+                    if len(cols) < 4:
+                        continue
+                    texts = [c.get_text(strip=True) for c in cols]
+                    # Extraire le sigle = premier token alphanumérique/tiret
+                    m = re.match(r'^([A-Z0-9-]+)', texts[0])
+                    sigle_key = m.group(1) if m else texts[0]
+                    epreuve = {
+                        "nom":        texts[1] if len(texts) > 1 else '',
+                        "date":       texts[2] if len(texts) > 2 else '',
+                        "note":       _parse_grade(texts[3]) if len(texts) > 3 else None,
+                        "coeff":      _parse_grade(texts[4]) if len(texts) > 4 else None,
+                        "min":        _parse_grade(texts[5]) if len(texts) > 5 else None,
+                        "max":        _parse_grade(texts[6]) if len(texts) > 6 else None,
+                        "moy_classe": _parse_grade(texts[7]) if len(texts) > 7 else None,
+                    }
+                    epreuves_by_sigle.setdefault(sigle_key, []).append(epreuve)
+
         # Onglet "Courses" = liste des modules avec note, coeff, min, max, moy
         courses_tab = sem_div.find(
             'div',
@@ -102,6 +130,7 @@ def parse_marks(html: str) -> dict:
                     texts = [c.get_text(strip=True) for c in cols]
 
                     nom = texts[2] if len(texts) > 2 else texts[0]
+                    sigle = texts[1] if len(texts) > 1 else ''
                     note = _parse_grade(texts[4]) if len(texts) > 4 else None
                     coeff = _parse_grade(texts[7]) if len(texts) > 7 else None
                     max_note = _parse_grade(texts[8]) if len(texts) > 8 else None
@@ -110,12 +139,13 @@ def parse_marks(html: str) -> dict:
 
                     modules.append({
                         "nom": nom,
-                        "sigle": texts[1] if len(texts) > 1 else '',
+                        "sigle": sigle,
                         "note": note,
                         "coeff": coeff,
                         "max": max_note,
                         "min": min_note,
                         "moy_classe": moy_classe,
+                        "epreuves": epreuves_by_sigle.get(sigle, [])
                     })
 
         semestres.append({
