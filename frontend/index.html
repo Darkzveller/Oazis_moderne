@@ -477,6 +477,128 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* ── Vue UE ───────────────────────────────────────────────────────────── */
+
+    /* Sélecteur de vue */
+    .view-switcher {
+      display: flex; gap: 8px; margin-bottom: 20px;
+    }
+    .view-btn {
+      padding: 6px 18px; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted); font-size: 0.82rem; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      transition: all var(--trans);
+    }
+    .view-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+    .view-btn.active {
+      background: rgba(108,99,255,0.15);
+      border-color: rgba(108,99,255,0.4); color: var(--accent2);
+    }
+
+    /* Bannière UE */
+    .ues-list { display: flex; flex-direction: column; gap: 20px; }
+
+    .ue-banner {
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      animation: fadeUp .35s ease both;
+    }
+
+    /* En-tête de la bannière */
+    .ue-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 24px;
+      background: linear-gradient(135deg,
+        rgba(108,99,255,0.18) 0%,
+        rgba(167,139,250,0.08) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .ue-title-block { flex: 1; min-width: 0; }
+    .ue-name {
+      font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ue-code {
+      font-size: 0.68rem; color: var(--muted); margin-top: 2px;
+      font-weight: 500; letter-spacing: .4px;
+    }
+    .ue-ects-badge {
+      padding: 4px 12px; border-radius: 100px;
+      background: rgba(108,99,255,0.2);
+      border: 1px solid rgba(108,99,255,0.3);
+      font-size: 0.72rem; font-weight: 700; color: var(--accent2);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .ue-avg {
+      font-size: 1.3rem; font-weight: 800;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* Ligne de stats UE */
+    .ue-stats {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+    }
+    .ue-stat {
+      flex: 1; text-align: center;
+      padding: 8px 4px;
+      border-right: 1px solid var(--border);
+    }
+    .ue-stat:last-child { border-right: none; }
+    .ue-stat-label {
+      font-size: 0.62rem; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .5px; font-weight: 600;
+    }
+    .ue-stat-value {
+      font-size: 0.88rem; font-weight: 700; margin-top: 2px;
+    }
+
+    /* Modules imbriqués dans la bannière UE */
+    .ue-modules { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+
+    .ue-module-row {
+      display: flex; flex-direction: column;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.055);
+      border-radius: var(--radius-sm);
+      transition: border-color var(--trans);
+    }
+    .ue-module-row:hover { border-color: rgba(108,99,255,0.2); }
+
+    .ue-module-top {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ue-module-name {
+      flex: 1; font-size: 0.9rem; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ue-module-coeff {
+      font-size: 0.68rem; color: var(--muted); flex-shrink: 0;
+    }
+    .ue-module-grade {
+      font-size: 0.95rem; font-weight: 800;
+      flex-shrink: 0; cursor: pointer;
+      padding: 2px 10px; border-radius: 100px;
+      border: 1px solid transparent;
+      transition: all var(--trans);
+    }
+    .ue-module-grade:hover {
+      background: rgba(108,99,255,0.12); border-color: rgba(108,99,255,0.3);
+    }
+    .ue-module-grade.grade-good { color: var(--good); }
+    .ue-module-grade.grade-warn { color: var(--warn); }
+    .ue-module-grade.grade-bad  { color: var(--bad); }
+    .ue-module-grade.grade-none { color: var(--muted); font-size: 0.75rem; cursor: default; }
+    .ue-module-grade.grade-none:hover { background: none; border-color: transparent; }
+
+    .ue-ep-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 8px 0 6px; }
+    .ue-epreuves   { display: flex; flex-direction: column; gap: 4px; }
+
     /* ── Responsive ──────────────────────────────────────────────────────── */
     @media (max-width: 560px) {
       .login-card { padding: 28px 20px; }
@@ -546,14 +668,23 @@
     <!-- Barre de sélection de semestre -->
     <div class="semester-bar" id="semesterBar"></div>
 
+    <!-- Sélecteur de vue : Matières | Par UE -->
+    <div class="view-switcher">
+      <button class="view-btn active" id="viewModules">Matières</button>
+      <button class="view-btn" id="viewUes">Par UE</button>
+    </div>
+
     <!-- En-tête du semestre sélectionné -->
     <div class="sem-header">
       <h2 class="sem-title" id="semTitle"></h2>
       <div class="sem-avg-badge" id="semAvgBadge"></div>
     </div>
 
-    <!-- Liste des modules -->
+    <!-- Vue matières (par défaut) -->
     <div class="modules-list" id="modulesList"></div>
+
+    <!-- Vue UEs -->
+    <div class="ues-list" id="uesList" style="display:none"></div>
   </section>
 </div>
 
@@ -599,9 +730,10 @@
 
 <script>
 /* ── State ──────────────────────────────────────────────────────────────── */
-let allData     = null;   // { semestres: [...] }
-let currentSem  = 0;      // index dans allData.semestres
-let loginValue  = '';
+let allData    = null;   // { semestres: [...] }
+let currentSem = 0;      // index dans allData.semestres
+let loginValue = '';
+let currentView = 'modules'; // 'modules' | 'ues'
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 const $ = id => document.getElementById(id);
@@ -707,6 +839,7 @@ function selectSemester(idx) {
   }
 
   renderModules(sem.modules);
+  renderUes(sem.ues || []);
 }
 
 function renderModules(modules) {
@@ -778,6 +911,153 @@ function renderModules(modules) {
     list.appendChild(row);
   });
 }
+
+/* ── Vue UE (dynamique) ─────────────────────────────────────────────────── */
+// Construite entièrement depuis les données JSON renvoyées par le serveur.
+// Aucune valeur codée en dur : noms, codes, notes et modules viennent
+// directement de l'HTML parsé d'OASIS.
+
+function renderUes(ues) {
+  const container = $('uesList');
+  container.innerHTML = '';
+
+  if (!ues.length) {
+    container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:40px">Aucune UE disponible.</p>';
+    return;
+  }
+
+  // Palette de couleurs pour différencier les UEs (cyclique)
+  const palettes = [
+    ['rgba(108,99,255,0.22)', 'rgba(108,99,255,0.08)'],
+    ['rgba(52,211,153,0.18)', 'rgba(52,211,153,0.06)'],
+    ['rgba(251,191,36,0.20)', 'rgba(251,191,36,0.06)'],
+    ['rgba(248,113,113,0.18)', 'rgba(248,113,113,0.06)'],
+    ['rgba(167,139,250,0.20)', 'rgba(167,139,250,0.07)'],
+  ];
+
+  ues.forEach((ue, uei) => {
+    const [c1, c2] = palettes[uei % palettes.length];
+    const gc = gradeClass(ue.note);
+
+    const banner = document.createElement('div');
+    banner.className = 'ue-banner';
+    banner.style.animationDelay = `${uei * 60}ms`;
+
+    // ── En-tête UE ───────────────────────────────────────────────────
+    const header = document.createElement('div');
+    header.className = 'ue-header';
+    header.style.background = `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`;
+    header.innerHTML = `
+      <div class="ue-title-block">
+        <div class="ue-name">${ue.nom}</div>
+        <div class="ue-code">${ue.code}</div>
+      </div>
+      ${ue.ects ? `<div class="ue-ects-badge">${ue.ects} ECTS</div>` : ''}
+      <div class="ue-avg ${gc}">${ue.note !== null ? fmt(ue.note) + '\u00a0/ 20' : '\u2014'}</div>
+    `;
+    banner.appendChild(header);
+
+    // ── Ligne stats UE ───────────────────────────────────────────────
+    if (ue.min !== null || ue.max !== null || ue.moy_classe !== null) {
+      const statsRow = document.createElement('div');
+      statsRow.className = 'ue-stats';
+      [
+        { label: 'Moy. classe', value: fmt(ue.moy_classe), cls: colorClass(ue.moy_classe) },
+        { label: 'Min',         value: fmt(ue.min),        cls: 'color-bad' },
+        { label: 'Max',         value: fmt(ue.max),        cls: 'color-good' },
+      ].forEach(s => {
+        const cell = document.createElement('div');
+        cell.className = 'ue-stat';
+        cell.innerHTML = `
+          <div class="ue-stat-label">${s.label}</div>
+          <div class="ue-stat-value ${s.cls}">${s.value}</div>
+        `;
+        statsRow.appendChild(cell);
+      });
+      banner.appendChild(statsRow);
+    }
+
+    // ── Modules de cette UE ──────────────────────────────────────────
+    const modsArea = document.createElement('div');
+    modsArea.className = 'ue-modules';
+
+    if (ue.modules.length === 0) {
+      modsArea.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;padding:4px 0">Aucun module.</p>';
+    } else {
+      ue.modules.forEach(mod => {
+        const mgc      = gradeClass(mod.note);
+        const hasGrade = mod.note !== null;
+        const epreuves = mod.epreuves || [];
+
+        const mRow = document.createElement('div');
+        mRow.className = 'ue-module-row';
+
+        // Ligne nom + note
+        const mTop = document.createElement('div');
+        mTop.className = 'ue-module-top';
+        mTop.innerHTML = `
+          <span class="ue-module-name" title="${mod.nom}">${mod.nom}</span>
+          ${mod.coeff ? `<span class="ue-module-coeff">\u00d7${fmt(mod.coeff)}</span>` : ''}
+          <span class="ue-module-grade ${mgc}"
+                ${hasGrade ? 'role="button" tabindex="0" title="Voir les statistiques"' : ''}>
+            ${hasGrade ? fmt(mod.note) + '\u00a0/ 20' : 'N/A'}
+          </span>
+        `;
+        if (hasGrade) {
+          const gel = mTop.querySelector('.ue-module-grade');
+          gel.addEventListener('click', () => openModal(mod));
+          gel.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(mod); });
+        }
+        mRow.appendChild(mTop);
+
+        // Épreuves sous le module
+        if (epreuves.length > 0) {
+          const epDiv = document.createElement('div');
+          epDiv.className = 'ue-ep-divider';
+          mRow.appendChild(epDiv);
+
+          const epList = document.createElement('div');
+          epList.className = 'ue-epreuves';
+
+          epreuves.forEach(ep => {
+            const epGc    = gradeClass(ep.note);
+            const hasNote = ep.note !== null;
+            const epLine  = document.createElement('div');
+            epLine.className = 'ep-line';
+            epLine.innerHTML = `
+              <span class="ep-name" title="${ep.nom}">${ep.nom}</span>
+              ${ep.date ? `<span class="ep-date">${ep.date}</span>` : ''}
+              <span class="ep-dots"></span>
+              <span class="ep-grade ${epGc}${hasNote ? ' clickable' : ''}">${hasNote ? fmt(ep.note) + '\u00a0/ 20' : '\u2014'}</span>
+            `;
+            if (hasNote) {
+              epLine.querySelector('.ep-grade').addEventListener('click', () => openEpreuveModal(ep, mod.nom));
+            }
+            epList.appendChild(epLine);
+          });
+          mRow.appendChild(epList);
+        }
+
+        modsArea.appendChild(mRow);
+      });
+    }
+
+    banner.appendChild(modsArea);
+    container.appendChild(banner);
+  });
+}
+
+/* ── Sélecteur de vue (Matières / Par UE) ───────────────────────────────── */
+function setView(view) {
+  currentView = view;
+  $('viewModules').classList.toggle('active', view === 'modules');
+  $('viewUes').classList.toggle('active', view === 'ues');
+  $('modulesList').style.display = view === 'modules' ? 'flex' : 'none';
+  $('uesList').style.display     = view === 'ues'     ? 'flex' : 'none';
+}
+
+$('viewModules').addEventListener('click', () => setView('modules'));
+$('viewUes').addEventListener('click',     () => setView('ues'));
 
 /* ── Modal épreuve (sous-note) ──────────────────────────────────────── */
 function openEpreuveModal(ep, nomModule) {

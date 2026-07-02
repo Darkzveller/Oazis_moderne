@@ -112,7 +112,38 @@ def parse_marks(html: str) -> dict:
                     }
                     epreuves_by_sigle.setdefault(sigle_key, []).append(epreuve)
 
-        # Onglet "Courses" = liste des modules avec note, coeff, min, max, moy
+        # ── UEs (TabModules) ─────────────────────────────────────────────
+        # Headers : Code | Titre fr | Nb ECTS | TC | Note | Résultat | Min | Max | Moy
+        ues_list: list = []
+        ues_by_code: dict = {}
+        ue_tab = sem_div.find('div', id=lambda x: x and x.startswith('TabModules'))
+        if ue_tab:
+            table = ue_tab.find('table')
+            if table:
+                for row in table.find_all('tr')[1:]:
+                    cols = row.find_all('td')
+                    if len(cols) < 2:
+                        continue
+                    texts = [c.get_text(strip=True) for c in cols]
+                    nom_ue = re.sub(r'[\x80-\xff]', '', texts[1]).strip()
+                    ue = {
+                        "code":       texts[0],
+                        "nom":        nom_ue,
+                        "ects":       texts[2] if len(texts) > 2 else '',
+                        "note":       _parse_grade(texts[4]) if len(texts) > 4 else None,
+                        "resultat":   texts[5] if len(texts) > 5 else '',
+                        "min":        _parse_grade(texts[6]) if len(texts) > 6 else None,
+                        "max":        _parse_grade(texts[7]) if len(texts) > 7 else None,
+                        "moy_classe": _parse_grade(texts[8]) if len(texts) > 8 else None,
+                        "modules":    [],
+                    }
+                    ues_list.append(ue)
+                    ues_by_code[texts[0]] = ue
+
+        # ── Courses (modules) ─────────────────────────────────────────────
+        # Col 0 : "EI-FISE-S05-UE1 <char>Titre UE" — code UE = 1er token
+        # Headers: Module | Sigle | Titre fr | Bloc | Note | Résultat EC |
+        #          Commentaire EC | Coeff | Max | Min | Moy
         courses_tab = sem_div.find(
             'div',
             id=lambda x: x and x.startswith('TabCourses')
@@ -120,41 +151,40 @@ def parse_marks(html: str) -> dict:
         if courses_tab:
             table = courses_tab.find('table')
             if table:
-                rows = table.find_all('tr')
-                # headers: Module | Sigle | Titre fr | Bloc | Note | Résultat EC |
-                #          Commentaire EC | Coeff | Max | Min | Moy
-                for row in rows[1:]:
+                for row in table.find_all('tr')[1:]:
                     cols = row.find_all('td')
                     if len(cols) < 5:
                         continue
                     texts = [c.get_text(strip=True) for c in cols]
 
-                    nom = texts[2] if len(texts) > 2 else texts[0]
-                    sigle = texts[1] if len(texts) > 1 else ''
-                    note = _parse_grade(texts[4]) if len(texts) > 4 else None
-                    coeff = _parse_grade(texts[7]) if len(texts) > 7 else None
-                    max_note = _parse_grade(texts[8]) if len(texts) > 8 else None
-                    min_note = _parse_grade(texts[9]) if len(texts) > 9 else None
-                    moy_classe = _parse_grade(texts[10]) if len(texts) > 10 else None
+                    ue_match = re.match(r'^([A-Z0-9-]+)', texts[0])
+                    ue_code  = ue_match.group(1) if ue_match else ''
+                    nom      = texts[2] if len(texts) > 2 else texts[0]
+                    sigle    = texts[1] if len(texts) > 1 else ''
 
-                    modules.append({
-                        "nom": nom,
-                        "sigle": sigle,
-                        "note": note,
-                        "coeff": coeff,
-                        "max": max_note,
-                        "min": min_note,
-                        "moy_classe": moy_classe,
-                        "epreuves": epreuves_by_sigle.get(sigle, [])
-                    })
+                    mod = {
+                        "nom":        nom,
+                        "sigle":      sigle,
+                        "ue_code":    ue_code,
+                        "note":       _parse_grade(texts[4]) if len(texts) > 4 else None,
+                        "coeff":      _parse_grade(texts[7]) if len(texts) > 7 else None,
+                        "max":        _parse_grade(texts[8]) if len(texts) > 8 else None,
+                        "min":        _parse_grade(texts[9]) if len(texts) > 9 else None,
+                        "moy_classe": _parse_grade(texts[10]) if len(texts) > 10 else None,
+                        "epreuves":   epreuves_by_sigle.get(sigle, []),
+                    }
+                    modules.append(mod)
+                    if ue_code in ues_by_code:
+                        ues_by_code[ue_code]["modules"].append(mod)
 
         semestres.append({
-            "label": f"S{s_num}",
+            "label":        f"S{s_num}",
             "num_semester": num_sem,
-            "year": year,
-            "year_label": f"{year}/{year + 1}",
-            "average": avg,
-            "modules": modules,
+            "year":         year,
+            "year_label":   f"{year}/{year + 1}",
+            "average":      avg,
+            "modules":      modules,
+            "ues":          ues_list,
         })
 
     # Trier du plus ancien au plus récent
