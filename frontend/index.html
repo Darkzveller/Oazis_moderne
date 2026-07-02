@@ -258,6 +258,16 @@
     .ep-grade.grade-warn  { color: rgba(251,191,36,0.65); }
     .ep-grade.grade-bad   { color: rgba(248,113,113,0.65); }
     .ep-grade.grade-none  { color: rgba(100,116,139,0.55); }
+    /* Note cliquable : curseur + halo au survol */
+    .ep-grade.clickable {
+      cursor: pointer; border-radius: 6px;
+      padding: 1px 6px; margin: -1px -6px;
+      transition: background var(--trans), filter var(--trans);
+    }
+    .ep-grade.clickable:hover {
+      background: rgba(108,99,255,0.12);
+      filter: brightness(1.4);
+    }
 
     /* ── Modal ───────────────────────────────────────────────────────────── */
     .modal-overlay {
@@ -753,8 +763,12 @@ function renderModules(modules) {
           <span class="ep-name" title="${ep.nom}">${ep.nom}</span>
           ${ep.date ? `<span class="ep-date">${ep.date}</span>` : ''}
           <span class="ep-dots"></span>
-          <span class="ep-grade ${epGc}">${hasNote ? fmt(ep.note) + ' / 20' : '—'}</span>
+          <span class="ep-grade ${epGc}${hasNote ? ' clickable' : ''}">${hasNote ? fmt(ep.note) + '\u00a0/ 20' : '\u2014'}</span>
         `;
+        if (hasNote) {
+          const epGradeEl = line.querySelector('.ep-grade');
+          epGradeEl.addEventListener('click', () => openEpreuveModal(ep, mod.nom));
+        }
         epContainer.appendChild(line);
       });
 
@@ -765,7 +779,58 @@ function renderModules(modules) {
   });
 }
 
-/* ── Modal ──────────────────────────────────────────────────────────────── */
+/* ── Modal épreuve (sous-note) ──────────────────────────────────────── */
+function openEpreuveModal(ep, nomModule) {
+  // Grand titre = nom de l'épreuve, sous-titre = matière parente
+  $('modalSubjectName').textContent = ep.nom;
+  $('modalSubjectSigle').textContent = nomModule;
+
+  // Grade hero — note de l'épreuve
+  const gradeEl = $('modalGradeValue');
+  gradeEl.textContent = fmt(ep.note) + '\u00a0/ 20';
+  gradeEl.className   = 'grade-value ' + colorClass(ep.note);
+
+  // Stats grid
+  const stats = [
+    { label: 'Moyenne classe', value: fmt(ep.moy_classe), cls: colorClass(ep.moy_classe) },
+    { label: 'Coefficient',    value: fmt(ep.coeff),      cls: '' },
+    { label: 'Note minimale',  value: fmt(ep.min),        cls: 'color-bad' },
+    { label: 'Note maximale',  value: fmt(ep.max),        cls: 'color-good' },
+  ];
+  $('modalStats').innerHTML = stats.map(s => `
+    <div class="stat-card">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value ${s.cls}">${s.value}</div>
+    </div>
+  `).join('');
+
+  // Barre de positionnement
+  const barWrap = $('modalBarWrap');
+  if (ep.min !== null && ep.max !== null && ep.note !== null && ep.max > ep.min) {
+    barWrap.style.display = 'block';
+    const pct = ((ep.note - ep.min) / (ep.max - ep.min)) * 100;
+    setTimeout(() => {
+      $('modalBarFill').style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }, 50);
+    $('barLegendMin').textContent = `Min\u00a0: ${fmt(ep.min)}`;
+    $('barLegendMoy').textContent = `Moy\u00a0: ${fmt(ep.moy_classe)}`;
+    $('barLegendMax').textContent = `Max\u00a0: ${fmt(ep.max)}`;
+  } else {
+    barWrap.style.display = 'none';
+  }
+
+  // Pas d'épreuves dans une épreuve
+  $('epreuvesSection').style.display = 'none';
+
+  // Date en sous-titre
+  $('modalSubjectSigle').textContent = ep.date
+    ? `${nomModule} \u2014 ${ep.date}`
+    : nomModule;
+
+  $('modalOverlay').classList.add('open');
+}
+
+/* ── Modal module ──────────────────────────────────────────────────── */
 function openModal(mod) {
   // Grand titre de la matière
   $('modalSubjectName').textContent = mod.nom;
