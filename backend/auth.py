@@ -7,11 +7,18 @@ POST de login réussi. On utilise donc une requests.Session() unique pendant
 toute la durée de vie du client, pour que ce cookie soit automatiquement
 réutilisé sur les appels suivants (récupération des notes, etc.).
 
+Le serveur renvoie un JSON lors du login, par exemple :
+  {"nexturl": "#codepage=MYCALENDAR", "text": "Connexion en cours...",
+   "success": true, "reload": "no"}
+On s'appuie sur ce champ "success" pour valider la connexion, ce qui est
+plus fiable qu'un second GET sur la page d'accueil.
+
 Aucun nom de matière, de semestre ou d'année n'apparaît dans ce fichier :
 il ne s'occupe que de la connexion, pas du contenu.
 """
 
 import requests
+import json as _json
 from dataclasses import dataclass
 
 from . import config
@@ -42,10 +49,13 @@ def _create_client() -> requests.Session:
     session.headers.update({
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
-        )
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
     })
-    session.get(f"{config.BASE_URL}/?", timeout=15)
+    # Ce GET est indispensable : il déclenche un Set-Cookie PHPSESSID que le
+    # serveur associera ensuite au compte après le POST de login.
+    session.get(f"{config.BASE_URL}/", timeout=15)
     return session
 
 
@@ -64,48 +74,43 @@ def login(identifiant: str, mot_de_passe: str) -> OasisSession:
         "targetProject": config.TARGET_PROJECT,
         "route": config.ROUTE_LOGIN,
     }
+    # Le champ "url" doit correspondre à la page de redirection post-login,
+    # exactement comme l'envoie le navigateur (observé dans le HAR).
     data = {
         "login": identifiant,
         "password": mot_de_passe,
-        "url": "",
+        "url": "codepage=MYCALENDAR",
+    }
+    # Ces headers reproduisent exactement ce qu'envoie Chrome (HAR).
+    login_headers = {
+        **config.DEFAULT_HEADERS,
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Origin": config.BASE_URL,
     }
 
     response = session.post(
         config.AJAX_ENDPOINT,
         params=params,
         data=data,
-        headers=config.DEFAULT_HEADERS,
+        headers=login_headers,
         timeout=15,
     )
     response.raise_for_status()
 
-    # NOTE IMPORTANTE : dans le HAR fourni, le corps de la réponse du login
-    # n'a pas été capturé (seule sa taille l'a été). On vérifie donc la
-    # connexion de façon indirecte pour le moment (voir _est_authentifie).
-    # Dès le premier test réel, il faudra imprimer `response.text` pour
-    # voir le format exact (JSON ? "OK" ? code d'erreur ?) et fiabiliser
-    # cette vérification.
-    if not _est_authentifie(session):
+    # Le serveur renvoie du JSON : {"success": true/false, "text": "...", ...}
+    # On s'appuie directement sur ce champ plutôt que d'effectuer un second GET.
+    try:
+        payload = response.json()
+    except ValueError:
         raise LoginError(
-            "Connexion refusée : identifiant ou mot de passe incorrect "
-            "(ou format de réponse du site différent de ce qui était prévu — "
-            "voir le commentaire dans auth.login)."
+            f"Réponse inattendue du serveur (non-JSON) : {response.text[:200]!r}"
         )
 
+    if not payload.get("success", False):
+        message = payload.get("text", "raison inconnue")
+        raise LoginError(f"Connexion refusée par le serveur : {message}")
+
     return OasisSession(session=session, login=identifiant)
-
-
-def _est_authentifie(session: requests.Session) -> bool:
-    """
-    Vérifie que la session est bien authentifiée en rechargeant la page
-    d'accueil : si elle contient encore le formulaire de connexion, on n'est
-    pas connecté.
-    """
-    home = session.get(f"{config.BASE_URL}/?", timeout=15)
-    contenu = home.text.lower()
-
-    indices_deconnecte = ['name="login"', 'name="password"', "se connecter"]
-    return not any(indice in contenu for indice in indices_deconnecte)
 
 
 def logout(oasis_session: OasisSession) -> None:
