@@ -1,0 +1,270 @@
+{
+  "semestres": [
+    {
+      "num_semester": 1,
+      "year": 2025,
+      "average": 12.17,
+      "modules": [
+        {
+          "nom": "Entreprise et Management 1 (FISE)",
+          "sigle": "EPU-F5-SEE",
+          "note": 18.0,
+          "coeff": 2.0,
+          "max": 19.25,
+          "min": 0.0,
+          "moy_classe": 16.34
+        },
+        {
+          "nom": "Développement Durable et Responsabilité Sociétale",
+          "sigle": "EPU-C5-DDR",
+          "note": null,
+          "coeff": 1.0,
+          "max": 15.8,
+          "min": 15.8,
+          "moy_classe": 15.8
+        },
+        {
+          "nom": "Anglais",
+          "sigle": "EPU-C5-LAN",
+          "note": 5.05,
+          "coeff": 2.0,
+          "max": 17.1,
+          "min": 0.0,
+          "moy_classe": 11.94
+        },
+        {
+          "nom": "Analyse de Fourier",
+          "sigle": "EPU-F5-MA2",
+          "note": 10.0,
+          "coeff": 3.0,
+          "max": 20.0,
+          "min": 3.0,
+          "moy_classe": 14.09
+        },
+        {
+          "nom": "Algèbre linéaire",
+          "sigle": "EPU-F5-MA1",
+          "note": 10.0,
+          "coeff": 3.0,
+          "max": 16.5,
+          "min": 0.0,
+          "moy_classe": 10.95
+        },
+        {
+          "nom": "Mise à niveau",
+          "sigle": "EPU-F5-DAN",
+          "note": 6.0,
+          "coeff": 0.0,
+          "max": 19.0,
+          "min": 1.0,
+          "moy_classe": 10.81
+        },
+        {
+          "nom": "Architecture des ordinateurs",
+          "sigle": "EPU-F5-IAR",
+          "note": 10.83,
+          "coeff": 3.0,
+          "max": 17.5,
+          "min": 8.5,
+          "moy_classe": 11.88
+        },
+        {
+          "nom": "Outils pour l'informatique",
+          "sigle": "EPU-F5-IOP",
+          "note": 15.59,
+          "coeff": 2.0,
+          "max": 18.03,
+          "min": 6.02,
+          "moy_classe": 13.86
+        },
+        {
+          "nom": "Langage C",
+          "sigle": "EPU-F5-ILC",
+          "note": 11.56,
+          "coeff": 3.0,
+          "max": 17.61,
+          "min": 6.22,
+          "moy_classe": 12.6
+        },
+        {
+          "nom": "Conception matérielle",
+          "sigle": "EPU-F5-DCM",
+          "note": null,
+          "coeff": 3.0,
+          "max": null,
+          "min": null,
+          "moy_classe": null
+        },
+        {
+          "nom": "Mesures et tests",
+          "sigle": "EPU-F5-TMT",
+          "note": 14.59,
+          "coeff": 2.0,
+          "max": 18.24,
+          "min": 8.2,
+          "moy_classe": 14.26
+        },
+        {
+          "nom": "Électronique Numérique",
+          "sigle": "EPU-F5-EEN",
+          "note": 16.15,
+          "coeff": 3.0,
+          "max": 18.8,
+          "min": 8.08,
+          "moy_classe": 14.7
+        },
+        {
+          "nom": "Fonctions élémentaires de l'Électronique Analogique",
+          "sigle": "EPU-F5-EEA",
+          "note": 10.27,
+          "coeff": 3.0,
+          "max": 17.77,
+          "min": 4.13,
+          "moy_classe": 12.79
+        }
+      ]
+    },
+    {
+      "num_semester": 2,
+      "year": 2025,
+      "average": 12.44,
+      "modules": [
+        {
+          "nom": "Projet électronique 1",
+          "sigle": "EPU-F6-PJE",
+          "note": 16.0,
+          "coeff": 1.0,
+          "max": 16.0,
+          "min": 5.0,
+          "moy_classe": 11.68
+        },
+        {
+          "nom": "Projet traitement du signal",
+          "sigle": "EPU-F6-PTS",
+          "note": 17.0,
+          "coeff": 1.0,
+          "max": 17.0,
+          "min": 12.0,
+          "moy_classe": 13.8
+        },
+        {
+          "nom": "Projet informatique 1",
+          "sigle": "EPU-F6-PJI",
+          "note": 13.0,
+          "coeff": 1.0,
+          "max": 20.0,
+          "min": 11.0,
+          "moy_classe": 14.86
+        },
+        {
+          "nom": "Éthique, Développement durable et responsabilité sociétale",
+          "sigle": "EPU-F6-DDR",
+          "note": 16.07,
+          "coeff": 2.0,
+          "max": 18.75,
+          "min": 0.0,
+          "moy_classe": 14.87
+        },
+        {
+          "nom": "Entreprise et Management 2 (FISE)",
+          "sigle": "EPU-F6-SEE",
+          "note": 15.0,
+          "coeff": 2.0,
+          "max": 18.0,
+          "min": 7.0,
+          "moy_classe": 12.04
+        },
+        {
+          "nom": "Anglais 2",
+          "sigle": "EPU-C6-LAN",
+          "note": 5.58,
+          "coeff": 2.0,
+          "max": 16.99,
+          "min": 0.0,
+          "moy_classe": 11.06
+        },
+        {
+          "nom": "Traitement du signal",
+          "sigle": "EPU-F6-TTS",
+          "note": 10.0,
+          "coeff": 3.0,
+          "max": 17.0,
+          "min": 1.0,
+          "moy_classe": 9.87
+        },
+        {
+          "nom": "Algorithmique élémentaire",
+          "sigle": "EPU-F6-IAL",
+          "note": 12.81,
+          "coeff": 3.0,
+          "max": 18.31,
+          "min": 6.63,
+          "moy_classe": 13.37
+        },
+        {
+          "nom": "Programmation Orientée Objet",
+          "sigle": "EPU-F6-IPO",
+          "note": 10.75,
+          "coeff": 3.0,
+          "max": 20.0,
+          "min": 0.0,
+          "moy_classe": 11.34
+        },
+        {
+          "nom": "Méthodes numériques",
+          "sigle": "EPU-F5-MA3",
+          "note": 7.55,
+          "coeff": 2.0,
+          "max": 17.75,
+          "min": 1.5,
+          "moy_classe": 10.55
+        },
+        {
+          "nom": "Projet VHDL",
+          "sigle": "EPU-F6-EPV",
+          "note": 13.54,
+          "coeff": 2.0,
+          "max": 19.1,
+          "min": 7.42,
+          "moy_classe": 13.8
+        },
+        {
+          "nom": "VHDL Comportemental",
+          "sigle": "EPU-F6-EEN",
+          "note": 16.57,
+          "coeff": 2.0,
+          "max": 16.57,
+          "min": 6.8,
+          "moy_classe": 11.55
+        },
+        {
+          "nom": "Micro-contrôleur 1",
+          "sigle": "EPU-F6-IMC",
+          "note": 13.0,
+          "coeff": 2.0,
+          "max": 18.3,
+          "min": 0.0,
+          "moy_classe": 12.81
+        },
+        {
+          "nom": "Composants et Circuits Microélectroniques",
+          "sigle": "EPU-F6-EEA",
+          "note": 13.4,
+          "coeff": 2.0,
+          "max": 16.6,
+          "min": 0.0,
+          "moy_classe": 10.99
+        },
+        {
+          "nom": "Engagement étudiant",
+          "sigle": "EPU-C6-DEE",
+          "note": null,
+          "coeff": 2.0,
+          "max": null,
+          "min": null,
+          "moy_classe": null
+        }
+      ]
+    }
+  ]
+}
